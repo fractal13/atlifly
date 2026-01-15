@@ -2,6 +2,33 @@
 
 A collection of CLI tools to lift your burdens and help you fly.
 
+## Available Tools
+
+- **`random-order`** - Shuffle and rename PDF files with numbered prefixes
+
+## Usage
+
+### random-order
+
+Shuffle and rename PDF files with numbered prefixes.
+
+```bash
+# Shuffle PDFs in current directory
+random-order
+
+# Shuffle PDFs in a specific directory
+random-order ~/Documents/pdfs
+
+# Extract names from numbered PDFs in current directory
+random-order extract
+
+# Extract names from numbered PDFs in a specific directory
+random-order extract ~/Documents/pdfs
+
+# Show help
+random-order --help
+```
+
 ## Installation
 
 Install with pipx (recommended):
@@ -20,22 +47,6 @@ For development (editable install):
 
 ```bash
 pipx install -e .
-```
-
-## Available Tools
-
-This package provides the following CLI commands:
-
-- `random-order` - Shuffle and rename PDF files with numbered prefixes
-
-## Usage
-
-After installation, run any tool directly:
-
-```bash
-random-order          # Shuffle PDFs in current directory
-random-order extract  # Extract names from numbered PDFs
-random-order --help   # Show help
 ```
 
 ## Adding New Tools
