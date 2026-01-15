@@ -7,28 +7,35 @@ This tool helps randomize the order of PDF files in a directory by:
 3. Renaming them with sequential number prefixes (01-, 02-, etc.)
 """
 
+import argparse
 import os
 import re
 import random
 import sys
 
 
-def shuffle():
-    """Shuffle PDF files in the current directory with numbered prefixes."""
+def shuffle(directory="."):
+    """Shuffle PDF files in the specified directory with numbered prefixes.
+
+    Args:
+        directory: Directory to process (default: current directory)
+    """
     # First pass: clean up filenames
-    for f in os.listdir("."):
+    for f in os.listdir(directory):
         match = re.match("^([0-9]+-)?(.*\\.pdf)", f, re.IGNORECASE)
         if match:
+            old_path = os.path.join(directory, f)
             new_name = f.replace(" ", "-")
             new_name = new_name.replace("'", "_")
             new_name = new_name.replace("(", "_")
             new_name = new_name.replace(")", "_")
             if new_name != f:
-                os.rename(f, new_name)
+                new_path = os.path.join(directory, new_name)
+                os.rename(old_path, new_path)
 
     # Second pass: collect PDF files
     files = []
-    for f in os.listdir("."):
+    for f in os.listdir(directory):
         match = re.match("^([0-9]+-)?(.*\\.pdf)", f, re.IGNORECASE)
         if match:
             files.append((f, match.group(2)))
@@ -37,18 +44,23 @@ def shuffle():
     random.shuffle(files)
     for i in range(len(files)):
         name = "{:02d}-{}".format(i + 1, files[i][1])
-        os.rename(files[i][0], name)
+        old_path = os.path.join(directory, files[i][0])
+        new_path = os.path.join(directory, name)
+        os.rename(old_path, new_path)
 
-    print(f"Shuffled and renamed {len(files)} PDF files")
+    print(f"Shuffled and renamed {len(files)} PDF files in {directory}")
 
 
-def extract_names():
+def extract_names(directory="."):
     """Extract and print names from numbered PDF files in order.
+
+    Args:
+        directory: Directory to process (default: current directory)
 
     Note: Only works if files have been renamed with the ##- prefix.
     """
     files = []
-    for f in os.listdir("."):
+    for f in os.listdir(directory):
         match = re.match("^(([0-9]+)-)?(([^_]+)_.*\\.pdf)", f, re.IGNORECASE)
         if match:
             files.append((int(match.group(2)), match.group(4)))
@@ -60,20 +72,40 @@ def extract_names():
 
 def main():
     """Main entry point for random-order tool."""
-    if len(sys.argv) > 1:
-        if sys.argv[1] in ["-h", "--help"]:
-            print(__doc__)
-            print("\nUsage:")
-            print("  random-order          Shuffle PDFs in current directory")
-            print("  random-order extract  Extract names from numbered PDFs")
-            print("  random-order --help   Show this help message")
-            return 0
-        elif sys.argv[1] == "extract":
-            extract_names()
-            return 0
+    parser = argparse.ArgumentParser(
+        description="Shuffle and rename PDF files with numbered prefixes",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  random-order                    Shuffle PDFs in current directory
+  random-order ~/Documents/pdfs   Shuffle PDFs in specified directory
+  random-order extract            Extract names from numbered PDFs
+  random-order extract ~/pdfs     Extract names from specified directory
+        """,
+    )
 
-    # Default action: shuffle
-    shuffle()
+    parser.add_argument(
+        "action",
+        nargs="?",
+        default="shuffle",
+        choices=["shuffle", "extract"],
+        help="Action to perform: shuffle PDFs (default) or extract names",
+    )
+
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="Directory to process (default: current directory)",
+    )
+
+    args = parser.parse_args()
+
+    if args.action == "extract":
+        extract_names(args.directory)
+    else:
+        shuffle(args.directory)
+
     return 0
 
 
