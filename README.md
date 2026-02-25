@@ -5,6 +5,8 @@ A collection of CLI tools to lift your burdens and help you fly.
 ## Available Tools
 
 - **`random-order`** - Shuffle and rename PDF files with numbered prefixes
+- **`latex-build`** - Build LaTeX PDFs with automatic reruns and cleanup
+- **`exam-score`** - Display exam percentage table by missed questions
 
 ## Usage
 
@@ -28,6 +30,32 @@ random-order extract ~/Documents/pdfs
 # Show help
 random-order --help
 ```
+
+### latex-build
+
+Build a LaTeX PDF, rerunning as directed by the log file. Requires `pdflatex` on PATH.
+
+```bash
+# Build a PDF by base name
+latex-build slides
+
+# Build using an explicit .tex or .pdf name
+latex-build slides.tex
+latex-build slides.pdf
+
+# Build a PDF in a specific directory
+latex-build ~/Documents/tex/slides.pdf
+```
+
+### exam-score
+
+Display a table of percentages based on missed questions.
+
+```bash
+# Display a table for a 40-question exam
+exam-score 40
+```
+
 
 ## Installation
 
@@ -68,9 +96,13 @@ atlifly/
 ├── src/
 │   └── atlifly/
 │       ├── __init__.py
-│       └── cli/
-│           ├── __init__.py
-│           └── random_order.py
+│       ├── cli/
+│       │   ├── __init__.py
+│       │   ├── latex_build.py
+│       │   ├── exam_score.py
+│       │   └── random_order.py
+│       └── scripts/
+│           └── latex_build.bash
 ├── pyproject.toml
 └── README.md
 ```

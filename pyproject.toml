@@ -20,6 +20,12 @@ classifiers = [
 [project.scripts]
 # Add your CLI tools here - each line creates a command
 random-order = "atlifly.cli.random_order:main"
+latex-build = "atlifly.cli.latex_build:main"
+exam-score = "atlifly.cli.exam_score:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/atlifly"]
+include = ["src/atlifly/scripts/latex_build.bash"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/atlifly/scripts/latex_build.bash"]
